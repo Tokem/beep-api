@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <nav>
+        <tarefas>
+            <label>Tarefas</label>
+            <uri>#</uri>
+            <pages>
+                <listar>
+                    <label>Listar</label>
+                    <controller>tarefa</controller>
+                    <action>index</action>
+                </listar>
+                
+                <cadastrar>
+                    <label>Cadastrar</label>
+                    <controller>tarefa</controller>
+                    <action>index</action>
+                </cadastrar>
+                
+                <filtrar>
+                    <label>Filtrar</label>
+                    <controller>tarefa</controller>
+                    <action>index</action>
+                </filtrar>
+            </pages>
+        </tarefas>
+        
+        <clientes>
+            <label>Clientes</label>
+            <controller>cliente</controller>
+            <action>index</action>
+            <resource>cliente</resource>
+        </clientes>
+        
+        <Usuarios>
+            <label>Usuarios</label>
+            <controller>usuario</controller>
+            <action>index</action>
+            <resource>index</resource>
+        </Usuarios>
+        
+    </nav>
+</config>

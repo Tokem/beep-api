@@ -1,0 +1,95 @@
+<?php 
+    $auth = Zend_Auth::getInstance();
+    $identity = $auth->getIdentity();
+    
+    $request = Zend_Controller_Front::getInstance()->getRequest();
+    $controller = $request->getControllerName();
+?>
+
+<ul class="navi">
+
+    <!-- Use the class nred, ngreen, nblue, nlightblue, nviolet or norange to add background color. You need to use this in <li> tag. -->
+    
+    <li class="has_submenu nred <?=$controller == "tarefa" ? "current\" " : "";?>">
+        
+
+        <a href="#">
+            <i class="icon-desktop"></i>Tarefas
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>    
+        </a>
+        <ul>
+            <?php if(!($identity->cli_permissao=="operador" || $identity->cli_tipo==2)):?>
+            <li><a href="<?=$this->baseurl()?>/tarefa/cadastrar">Cadastrar</a></li>
+            <?php endif;?>
+            <li><a href="<?=$this->baseurl()?>/tarefa">Listar</a></li>
+        </ul>
+    </li>
+
+    <li class="has_submenu nlightblue <?=$controller == "notificacao" ? "current\" " : "";?>">
+        <a href="#">
+            <i class="icon-envelope-alt"></i>Mensagens
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>    
+        </a>
+        <ul>
+            <li><a href="<?=$this->baseurl()?>/notificacao">Inbox</a></li>
+        </ul>
+    </li>
+    <li class="has_submenu nblue <?=$controller == "aplicativos" ? "current\" " : "";?>">
+        <a href="#">
+            <!-- Menu name with icon -->
+            <i class="icon-thumbs-up"></i>Sociais 
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>
+        </a>
+
+        <ul>
+            <li><a href="<?=$this->baseurl()?>/aplicativos/listar">Listar App</a></li>
+            <li><a href="<?=$this->baseurl()?>/social/">Solicitações</a></li>
+        </ul>
+    </li>
+<?php if(!($identity->cli_permissao=="operador" || $identity->cli_permissao=="social" || $identity->cli_tipo==2)):?>
+    <!-- Menu with sub menu -->
+    <li class="has_submenu ngreen <?=$controller == "usuario" ? "current\" " : "";?>">
+        <a href="#">
+            <!-- Menu name with icon -->
+            <i class="icon-user"></i>Usuários 
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>
+        </a>
+
+        <ul>
+            <li><a href="<?=$this->baseurl()?>/usuario/cadastrar">Cadastrar</a></li>
+            <li><a href="<?=$this->baseurl()?>/usuario/">Listar</a></li>
+<!--            <li><a href="/usuario/logs">Logs</a></li>-->
+        </ul>
+    </li>    
+    <li class="has_submenu nviolet <?=$controller == "cliente" ? "current\" " : "";?>">
+        <a href="#">
+            <!-- Menu name with icon -->
+            <i class="icon-list"></i>Clientes 
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>
+        </a>
+
+        <ul>
+            <li><a href="<?=$this->baseurl()?>/cliente/cadastrar">Cadastrar</a></li>
+            <li><a href="<?=$this->baseurl()?>/cliente/">Listar</a></li>
+        </ul>
+    </li>
+<?php  endif;?>
+    <li class="has_submenu norange <?=$controller == "suporte" ? "current\" " : "";?>">
+        <a href="#">
+            <!-- Menu name with icon -->
+            <i class="icon-wrench"></i>Suporte 
+            <!-- Icon for dropdown -->
+            <span class="pull-right"><i class="icon-angle-right"></i></span>
+        </a>
+
+        <ul>
+            <li><a href="<?=$this->baseurl()?>/suporte/problemas">Problemas</a></li>
+            <li><a href="<?=$this->baseurl()?>/suporte/melhorias">Melhorias</a></li>
+        </ul>
+    </li>
+</ul>

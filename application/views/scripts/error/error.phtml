@@ -1,0 +1,117 @@
+
+
+<?php
+  $env =  getenv('APPLICATION_ENV');
+?>
+
+
+<?php if($env=="development"):?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Zend Framework Default Application</title>
+</head>
+<body>
+  <h1>An error occurred</h1>
+  <h2><?php echo $this->message ?></h2>
+
+  <?php if (isset($this->exception)): ?>
+  
+  <h3>Exception information:</h3>
+  <p>
+      <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+  </p>
+
+  <h3>Stack trace:</h3>
+  <pre><?php echo $this->exception->getTraceAsString() ?>
+  </pre>
+
+  <h3>Request Parameters:</h3>
+  <pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?>
+  </pre>
+
+  <?php endif ?>
+
+</body>
+</html>
+<?php endif;?>
+
+<?php if($env=="production"):?>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <!-- Title and other stuffs -->
+  <title>Erro - DUCAJOBS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="">
+
+  <!-- Stylesheets -->
+  <link href="<?php echo $this->baseUrl()?>/style/bootstrap.css" rel="stylesheet">
+  <!-- Font awesome icon -->
+  <link rel="stylesheet" href="<?php echo $this->baseUrl()?>/style/font-awesome.css">
+  <!-- Main style sheet -->
+  <link href="<?php echo $this->baseUrl()?>/style/style.css" rel="stylesheet">
+  <!-- Responsive Bootstrap -->
+  
+  
+  <!-- HTML5 Support for IE -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shim.js"></script>
+  <![endif]-->
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="img/favicon/favicon.png">
+</head>
+
+<body>
+
+<!-- Form area -->
+<div class="error-page">
+  <div class="container-fluid">
+
+    <div class="row-fluid">
+      <div class="span12">
+        <!-- Widget starts -->
+            <div class="widget wred">
+              <!-- Widget head -->
+              <div class="widget-head">
+                <i class="icon-question-sign"></i> Erro do sistema
+              </div>
+
+              <div class="widget-content">
+                <div class="padd error">
+                  
+                  <h1>Erro 500 erro interno!!</h1>
+                  <p>Desculpe mais aconteceu um erro no sistema! por favor tente novamente, se o erro persistir entre em contato com o suporte!</p>
+                  <br />
+                                 
+                 <br />
+                 <div class="horizontal-links">
+                <a href="<?php echo $this->baseUrl()?>/tarefa/">Visão geral</a> | <a href="<?php echo $this->baseUrl()?>/suporte/problemas">Suporte</a>
+                 </div>
+
+                </div>
+              </div>
+                <div class="widget-foot">
+                  <!-- Footer goes here -->
+                </div>
+            </div>  
+      </div>
+    </div>
+  </div> 
+</div>
+  
+    
+
+<!-- JS -->
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.js"></script>
+</body>
+</html>
+<?php endif; ?>
