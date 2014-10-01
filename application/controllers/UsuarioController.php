@@ -9,9 +9,9 @@ class UsuarioController extends Zend_Controller_Action {
 
     public function init() {
         $this->_usuario = new Application_Model_Usuario();
-        $this->_helper->layout->disableLayout();
         $this->_strip = new Zend_Filter_StripTags();
         $this->_trim = new Zend_Filter_StringTrim();
+        $this->_helper->layout->disableLayout();
     }
     
     public function indexAction()
@@ -45,11 +45,23 @@ class UsuarioController extends Zend_Controller_Action {
                 try {
                     
                     $return = $this->_usuario->insert($user);
+                    $beep = new Application_Model_Beeps();
+
+                    $beeps = array("usr_id_fk"=>"$return");
+                    $idBeep = $beep->insert($beeps);
+                    $returnBeep = $beep->find($idBeep)->current();
+
                     $allMensages["msg-sucess"]["create"] = array("state"=>"200",
                         "tokem"=>"$tokem",
                         "usuario"=>"$usuario",
                         "email"=>"$email",
-                        "msg"=>"Cadastro realizado com sucesso");                    
+                        "permissao"=>"usuario",
+                        "beeps"=>"$returnBeep->bee_beeps",
+                        "msg"=>"Cadastro realizado com sucesso");
+
+                    $folder = new Tokem_ManipuleFolder();
+                    $folder->createFolderUser($return);
+
                     echo json_encode($allMensages);
                     exit;
                     

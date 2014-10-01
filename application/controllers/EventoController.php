@@ -15,7 +15,7 @@ class EventoController extends Zend_Controller_Action
 
     public function createAction()
     {
-        // action body
+        
     }
 
     public function editAction()
