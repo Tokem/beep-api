@@ -22,8 +22,7 @@ class LoginController extends Zend_Controller_Action {
         
         $request = $this->getRequest();
         $dataRequest = $request->getPost();    
-        
-        if($request->isXmlHttpRequest() && isset($dataRequest['email'])&& isset($dataRequest['senha'])){
+        if($request->isXmlHttpRequest() && isset($dataRequest['email'])&& isset($dataRequest['senha']) && !empty($dataRequest['email']) && !empty($dataRequest['senha']) ){
 
             // pega o adaptador de autenticação configurado
             $adapter = $this->_getAuthAdapter();
@@ -53,7 +52,7 @@ class LoginController extends Zend_Controller_Action {
                 $moedas = $return['bee_beeps'];
 
 
-                $allMensages["msg-sucess"]["login"] = array("state"=>"200",
+                $allMensages["msg-sucess"] = array("state"=>"200",
                     "msg"=>"Login realizado com sucesso",
                     "permissao"=>"$identity->usr_permissao",
                     "tokem"=>"$identity->usr_tokem",
@@ -68,11 +67,11 @@ class LoginController extends Zend_Controller_Action {
                 // se não deu certo, ver qual foi o erro
                 $code = $result->getCode();
                 if ($code == Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND || $code == Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID) {
-                    $allMensages["msg-error"]["login"] = array("state"=>"401","msg"=>"Login ou senha inválidos");             
+                    $allMensages["msg-error"] = array("state"=>"401","msg"=>"Login ou senha inválidos");             
                     echo json_encode($allMensages);
                     exit;
                 } else {
-                    $allMensages["msg-error"]["login"] = array("state"=>"500","msg"=>"Erro ao tentar se conectar! tente novamente mais tarde");             
+                    $allMensages["msg-error"] = array("state"=>"500","msg"=>"Erro ao tentar se conectar! tente novamente mais tarde");             
                     echo json_encode($allMensages);
                     exit;
                 }
@@ -81,6 +80,7 @@ class LoginController extends Zend_Controller_Action {
             http_response_code(203);
             exit();
         }
+        exit;
     }
 
     public function logoutAction() {

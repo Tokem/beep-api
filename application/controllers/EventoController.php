@@ -15,6 +15,10 @@ class EventoController extends Zend_Controller_Action
 
     public function createAction()
     {
+        $request = $this->getRequest();
+        $dataRequest = $request->getPost();  
+        
+        exit;
         
     }
 

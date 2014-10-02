@@ -11,20 +11,19 @@
  *
  * @author Rodolfo Almeida
  */
-class Tokem_ValidatorUser {
+class Tokem_ValidatorEvent {
     
     private $_allMensages = null;
-    private $_user = null;
     protected $_strip = null;
     protected $_trim = null;
     
     
-    public function verifyUser($user){
+    public function verifyTag($tag){
         
         $this->_strip = new Zend_Filter_StripTags();
         $this->_trim = new Zend_Filter_StringTrim();
         
-        $user= str_replace(' ', '',$this->_trim->filter($this->_strip->filter($user)));
+        $user= $this->_trim->filter($this->_strip->filter($user));
         
         $this->_user = new Application_Model_Usuario();
         $search = $this->_user->fetchRow("usr_usuario = '$user' ");
@@ -32,30 +31,18 @@ class Tokem_ValidatorUser {
         return $valid = isset($search->usr_id);
     }
     
-    public function verifyEmail($email){
-        
-        $this->_strip = new Zend_Filter_StripTags();
-        $this->_trim = new Zend_Filter_StringTrim();
-        
-        $email= $this->_trim->filter($this->_strip->filter($email));
-        
-        $this->_user = new Application_Model_Usuario();
-        $search = $this->_user->fetchRow("usr_email = '$email' ");
-        
-        return $valid = isset($search->usr_id);
-    } 
-    
     public function firist($dataRequest){
         
         /*Validadores*/
         $validatorNoEmpty = new Zend_Validate_NotEmpty();
         $validatorNoEmpty->setMessage('é obrigatório');
         
-        $validatorMinChar = new Zend_Validate_StringLength(5);
-        $validatorMinChar->setMessage('não pode ser menor que 5');
+        $validatorMinChar = new Zend_Validate_StringLength(5,100);
+        $validatorMinChar->setMessage('não pode ser menor que 5 nem maior que 100');
         
-        $validatorEmail = new Zend_Validate_EmailAddress();
-        $validatorEmail->setMessage("Forneça um e-mail válido");
+        $validarHora =  new Zend_Validate_Date('hh:ii');
+        $validarHora->setMessage('informe uma hora válida');
+        
         
         /*
          * Validar Vazios

@@ -36,7 +36,7 @@ class UsuarioController extends Zend_Controller_Action {
             if(is_bool($valid)){
                 
                 
-                $usuario = $this->_trim->filter($this->_strip->filter($dataRequest['usuario']));
+                $usuario = str_replace(' ', '',$this->_trim->filter($this->_strip->filter($dataRequest['usuario'])));
                 $email = $this->_trim->filter($this->_strip->filter($dataRequest['email']));
                 $senha = $this->_trim->filter($this->_strip->filter(md5($dataRequest['senha'])));
                 $tokem = $this->_trim->filter($this->_strip->filter($better_token = md5(uniqid(rand(), true))));
