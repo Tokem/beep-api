@@ -44,6 +44,20 @@ class Tokem_ValidatorUser {
         
         return $valid = isset($search->usr_id);
     } 
+
+
+    public function verifyFacebookId($facebook_id){
+        
+        $this->_strip = new Zend_Filter_StripTags();
+        $this->_trim = new Zend_Filter_StringTrim();
+        
+        $email= $this->_trim->filter($this->_strip->filter($facebook_id));
+        
+        $this->_user = new Application_Model_Usuario();
+        $search = $this->_user->fetchRow("usr_id_facebook = '$facebook_id' ");
+        
+        return $valid = isset($search->usr_id);
+    } 
     
     public function firist($dataRequest){
         

@@ -51,7 +51,8 @@ class UsuarioController extends Zend_Controller_Action {
                     $idBeep = $beep->insert($beeps);
                     $returnBeep = $beep->find($idBeep)->current();
 
-                    $allMensages["msg-sucess"]["create"] = array("state"=>"200",
+                    $allMensages["msg"] = "success";
+                    $allMensages["data"] = array("state"=>"200",
                         "tokem"=>"$tokem",
                         "usuario"=>"$usuario",
                         "email"=>"$email",
@@ -67,18 +68,103 @@ class UsuarioController extends Zend_Controller_Action {
                     
                 } catch (Exception $exc) {
                     
-                    $allMensages["msg-erro"]["create"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                    $allMensages["msg"] = "error";
+                    $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
                     echo json_encode($allMensages);
                     exit;
                 }
-
-                var_dump($return);
-                exit;
                 
             }else{
                 echo $valid;
                 exit();
             }
+            
+        }
+        
+    }
+
+
+    public function createFacebookAction()
+    {   
+        $request = $this->getRequest();    
+        $dataRequest = $request->getPost();
+        
+        if(!$request->isXmlHttpRequest()){
+            http_response_code(203);
+            exit();
+        }else{
+            
+            
+            $validatorFirist = new Tokem_ValidatorUser();
+
+                $faceId =$dataRequest['face_id'];
+                $username = $dataRequest['username'];
+                $senha = md5($dataRequest['senha']);
+                $email = $dataRequest['email'];
+                $firist = $dataRequest['firistName'];
+                $lastname = $dataRequest['lastName'];
+                $gender = $dataRequest['gender'];
+                $imagePerfil = $dataRequest['imagePerfil'];
+                $tokem = $better_token = md5( uniqid(rand(), true) );
+                
+                $validatorFirist = new Tokem_ValidatorUser();
+                $validFace = $validatorFirist->verifyFacebookId($faceId);
+
+                if($validFace){
+                    $allMensages["msg"] = "error";
+                    $allMensages["data"] = array("state"=>"200","msg"=>"Cadastro já existe!");
+                    echo json_encode($allMensages);
+                    exit;
+                }
+
+
+                $userFacebook = array(
+                    "usr_id_facebook"=>"$faceId",
+                    "usr_usuario"=>"$username",
+                    "usr_email"=>"$email",
+                    "usr_senha"=>"$senha",
+                    "usr_tokem"=>"$tokem",
+                    "usr_primeiro_nome"=>"$firist",
+                    "usr_ultimo_nome"=>"$lastname",
+                    "usr_genero"=>"$gender",
+                    "usr_foto_perfil"=>"$imagePerfil"
+                );
+                
+                try {
+                    
+                    $return = $this->_usuario->insert($userFacebook);
+
+                    $beep = new Application_Model_Beeps();
+                    $beeps = array("usr_id_fk"=>"$return");
+                    $idBeep = $beep->insert($beeps);
+                    $returnBeep = $beep->find($idBeep)->current();
+
+                    $allMensages["msg"] = "success";
+                    $allMensages["data"] = array("state"=>"200",
+                        "tokem"=>"$tokem",
+                        "usuario"=>"$username",
+                        "email"=>"$email",
+                        "permissao"=>"usuario",
+                        "beeps"=>"$returnBeep->bee_beeps",
+                        "msg"=>"Cadastro realizado com sucesso");
+
+                    $folder = new Tokem_ManipuleFolder();
+                    $folder->createFolderUser($return);
+
+                    echo json_encode($allMensages);
+                    exit;
+                    
+                } catch (Zend_Db_Exception $e) {
+                
+                    echo $e->getMessage();
+                    exit;
+                    
+                    $allMensages["msg"] = "error";
+                    $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                    echo json_encode($allMensages);
+                    exit;
+                }
+                
             
         }
         
