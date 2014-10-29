@@ -2,8 +2,11 @@
 
 class LoginController extends Zend_Controller_Action {
 
+
+    protected $_usuario = null;
+
     public function init() {
-        /* Initialize action controller here */
+        
         /* Desabilitar o layout */
         $this->_helper->layout->disableLayout();
     }
@@ -85,6 +88,8 @@ class LoginController extends Zend_Controller_Action {
         }
         exit;
     }
+
+    
 
     public function logoutAction() {
         // Apaga da instância do Zend Auth a identificação no sistema.

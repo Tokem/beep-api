@@ -48,8 +48,10 @@ class UsuarioController extends Zend_Controller_Action {
                     $beep = new Application_Model_Beeps();
 
                     $beeps = array("usr_id_fk"=>"$return");
+
                     $idBeep = $beep->insert($beeps);
                     $returnBeep = $beep->find($idBeep)->current();
+
 
                     $allMensages["msg"] = "success";
                     $allMensages["data"] = array("state"=>"200",
@@ -62,11 +64,14 @@ class UsuarioController extends Zend_Controller_Action {
 
                     $folder = new Tokem_ManipuleFolder();
                     $folder->createFolderUser($return);
-
+                    $allMensages["msg"] = "success";
                     echo json_encode($allMensages);
                     exit;
                     
-                } catch (Exception $exc) {
+                } catch (Zend_Db_Exception $e) {
+
+                    echo $e->getMenssage();
+                    exit;
                     
                     $allMensages["msg"] = "error";
                     $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");

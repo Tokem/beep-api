@@ -85,7 +85,7 @@ class Tokem_ValidatorUser {
             
             if(!$valid){    
                 $mensage = $warning["isEmpty"];
-                $this->_allMensages["msg-validation"]["$key"] = array("msg"=>"O campo '$key' $mensage");
+                $this->_allMensages["data"]["$key"] = "O campo '$key' $mensage";
                 unset($dataRequest[$key]);
             }
         }
@@ -99,7 +99,7 @@ class Tokem_ValidatorUser {
         
             if(!$valid){    
                 $mensage = $warning["emailAddressInvalidFormat"];
-                $this->_allMensages["msg-validation"]["email"] = array("msg"=>"$mensage");
+                $this->_allMensages["data"]["email"] = "$mensage";
                 unset($dataRequest['email']);
             }
         }
@@ -118,7 +118,7 @@ class Tokem_ValidatorUser {
             
             if(!$valid){
                 $mensage = $warning["stringLengthTooShort"];
-                $this->_allMensages["msg-validation"]["$key"] = array("msg"=>"O campo '$key' $mensage");
+                $this->_allMensages["data"]["$key"] = "O campo '$key' $mensage";
                 unset($dataRequest[$key]);
             }
             
@@ -129,7 +129,7 @@ class Tokem_ValidatorUser {
          */
         if(isset($dataRequest['senha'])){
           if(!($dataRequest['senha']==$dataRequest['repetir'])){
-              $this->_allMensages["msg-validation"]["senha"] = array("msg"=>"Senhas não conferem");
+              $this->_allMensages["data"]["senha"] = "Senhas não conferem";
           }  
         }
         
@@ -143,7 +143,7 @@ class Tokem_ValidatorUser {
            $valid = $this->verifyUser($dataRequest['usuario']);
            
            if($valid){
-              $this->_allMensages["msg-validation"]["usuario"] = array("msg"=>"Usuário indispónivel"); 
+              $this->_allMensages["data"]["usuario"] = "Usuário indispónivel"; 
            }
            
         }
@@ -156,13 +156,14 @@ class Tokem_ValidatorUser {
            $valid = $this->verifyEmail($dataRequest['email']);
            
            if($valid){
-              $this->_allMensages["msg-validation"]["email"] = array("msg"=>"Email já esta sendo utilizado"); 
+              $this->_allMensages["data"]["email"] = "Email já esta sendo utilizado"; 
            }
            
         }
         
             
         if(isset($this->_allMensages)){
+            $this->_allMensages["msg"] = "error";          
             return json_encode($this->_allMensages);
             exit;
         }else{
