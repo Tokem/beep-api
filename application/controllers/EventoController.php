@@ -29,13 +29,18 @@ class EventoController extends Zend_Controller_Action
         $functions = new Tokem_Functions();
         
         if ($request->isPost()) {
-            
-            $tokem = $dataRequest["usr_tokem"];
-            $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
-            
-            $diretorio ="./upload/users/user_id_".  $usuario->usr_id."/events";
-            $adapter = new Zend_File_Transfer_Adapter_Http(); 
-            
+
+
+            try {
+
+
+
+                $tokem = $dataRequest["usr_tokem"];
+                $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
+
+                $diretorio ="./upload/users/user_id_".  $usuario->usr_id."/events";
+                $adapter = new Zend_File_Transfer_Adapter_Http(); 
+
                 foreach ($adapter->getFileInfo() as $file => $info) {
                     if ($adapter->isUploaded($file)) {
 
@@ -58,46 +63,48 @@ class EventoController extends Zend_Controller_Action
                         $adapter->receive($file);
                     }
                 } 
-            
-            $aux = explode('/', $dataRequest['data_festa']);
-            $data = $aux[2] . "-".$aux[1]."-".$aux[0];
+
+                $aux = explode('/', $dataRequest['data_festa']);
+                $data = $aux[2] . "-".$aux[1]."-".$aux[0];
                 
-            $evento = array(
-                "eve_nome"=>$dataRequest["nome_festa"],
-                "eve_tag"=>$dataRequest["tag_festa"],
-                "eve_data"=>$data,
-                "eve_hora_inicio"=>$dataRequest["hora_festa"],
-                "eve_local"=>$dataRequest["local_festa"],
-                "eve_localizacao"=>$dataRequest["localizacao_festa"],
-                "eve_image"=>$fname,
-                "cat_id_fk"=>$dataRequest["cat_festa"],
-             );
-            
-            
-           $idEvent = $this->_evento->insert($evento);
-             
-           for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
-               $estilo = $dataRequest["estilo"][$i];
-                   $atracao = array("atr_nome"=>$dataRequest["atracao"][$i],"eve_id_fk"=>$idEvent,"est_id_fk"=>$estilo);
-                   $this->_atracao->insert($atracao);
-           } 
-           
-           for ($i =0; $i < count($dataRequest["valor"]);$i++) {
-               $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
-               $this->_ingresso->insert($ingresso);
-           }
-           
-           
-            
-                exit;
-            
-            
-        }
+                $evento = array(
+                    "eve_nome"=>$dataRequest["nome_festa"],
+                    "eve_tag"=>$dataRequest["tag_festa"],
+                    "eve_data"=>$data,
+                    "eve_hora_inicio"=>$dataRequest["hora_festa"],
+                    "eve_local"=>$dataRequest["local_festa"],
+                    "eve_localizacao"=>$dataRequest["localizacao_festa"],
+                    "eve_image"=>$fname,
+                    "cat_id_fk"=>$dataRequest["cat_festa"],
+                    );
 
 
-        exit;
+                $idEvent = $this->_evento->insert($evento);
+
+                for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
+                 $estilo = $dataRequest["estilo"][$i];
+                 $atracao = array("atr_nome"=>$dataRequest["atracao"][$i],"eve_id_fk"=>$idEvent,"est_id_fk"=>$estilo);
+                 $this->_atracao->insert($atracao);
+             } 
+
+             for ($i =0; $i < count($dataRequest["valor"]);$i++) {
+                 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
+                 $this->_ingresso->insert($ingresso);
+             }
+
+             $allMensages["msg"] = "success";
+                    $allMensages["data"] = array("state"=>"200",
+                        "msg"=>"Evento cadastrado com sucesso!");
+                echo json_encode($allMensages);    
+             exit;
+
+             }catch (Zend_Db_Exception $e) {
         
-    }
+            }
+
+         }
+
+ }
 
     public function editAction()
     {
@@ -110,11 +117,6 @@ class EventoController extends Zend_Controller_Action
     }
 
     public function moderateAction()
-    {
-        // action body
-    }
-
-    public function listAction()
     {
         // action body
     }
