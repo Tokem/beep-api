@@ -16,8 +16,16 @@ class EventoListController extends Zend_Controller_Action
     }
 
 
-    public function listEspecial(){
+     public function indexAction()
+    {
+        // action body
+    }
 
+
+    public function listEspecialAction(){
+
+        $this->_evento->listEspecial();
+        exit;
 
     }    
 
