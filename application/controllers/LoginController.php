@@ -50,7 +50,7 @@ class LoginController extends Zend_Controller_Action {
                 $identity = $auth->getIdentity();
 
                 $beep = new Application_Model_Beeps();
-                $return = $beep->getBeeps($identity->usr_id);
+                $return = $beep->getBase($identity->usr_id);
                 $categoria = $return['cla_nome'];
                 $moedas = $return['bee_beeps'];
 
@@ -58,11 +58,13 @@ class LoginController extends Zend_Controller_Action {
                 $allMensages["msg"] = "success";
                 $allMensages["data"]=array("state"=>"200",
                     "msg"=>"Login realizado com sucesso",
+                    "nome"=>$return["usr_primeiro_nome"],
+                    "username"=>$return["usr_usuario"],
                     "permissao"=>"$identity->usr_permissao",
                     "tokem"=>"$identity->usr_tokem",
-                    "categoria"=>"$categoria",
+                    "classificacao"=>"$categoria",
                     "beeps"=>"$moedas",
-                    "imagem"=>"$identity->usr_foto_perfil");
+                    "imagem"=>$return["usr_foto_perfil"]);
                                  
                 echo json_encode($allMensages);
                 exit;
