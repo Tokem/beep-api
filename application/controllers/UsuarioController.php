@@ -180,14 +180,73 @@ class UsuarioController extends Zend_Controller_Action {
         
          $request = $this->getRequest();    
          $dataRequest = $request->getPost();
+         $functions = new Tokem_Functions();
         
-        if(!isset($dataRequest['tokem'])){
+        if(!isset($dataRequest['usr_tokem'])){
             http_response_code(203);
             exit();
         }else{
 
-            $tokem = $dataRequest["tokem"];
-            $usuario =  $this->_usuario->find($tokem)->current();
+            $tokem = $dataRequest["usr_tokem"];
+            $usuario =  $this->_usuario->fetchRow("usr_tokem = '$tokem' ");
+
+            $usuario->usr_primeiro_nome = $dataRequest["usr_primeiro_nome"];
+            $usuario->usr_ultimo_nome = $dataRequest["usr_ultimo_nome"];
+            
+            $validator = new Tokem_ValidatorUser();
+            $return = $validator->verifyEmail($dataRequest["usr_email"]);
+
+
+
+            if(!$return){
+              $usuario->usr_email = $dataRequest["usr_email"];      
+           
+                
+                //Obtem a foto do usuário
+                $diretorio ="./upload/users/user_id_".  $usuario->usr_id."/profile";
+                $adapter = new Zend_File_Transfer_Adapter_Http(); 
+
+                foreach ($adapter->getFileInfo() as $file => $info) {
+                    if ($adapter->isUploaded($file)) {
+
+                        @$name = $adapter->getFileName($file);
+
+                        $fileName = $functions->removeAcentos($info['name']);
+                        $newFileName = strtolower(str_replace(' ', '',$fileName));
+                        
+                        $img_nome = md5(microtime()).'_'.$newFileName;
+                        $fname = $diretorio ."/". $img_nome;
+                        @$caminho  = ltrim($diretorio, ".");
+                        
+                        /**
+                         *  Let's inject the renaming filter
+                         */
+                        $adapter->addFilter(new Zend_Filter_File_Rename(array('target' => $fname, 'overwrite' => true)), null, $file);
+                        /**
+                         * And then we call receive manually
+                         */
+                        $adapter->receive($file);
+                    }
+                } 
+
+            $usuario->usr_foto_perfil = $fname;
+
+            $usuario->save();
+
+            $allMensages["msg"] = "success";
+            $allMensages["data"]=array("msg"=>"Dados atualizados com sucesso!");
+
+            echo json_encode($allMensages);
+            exit;
+
+            }else{
+                $allMensages["msg"] = "error";
+                $allMensages["data"] = array("msg"=>"Email Esta sendo utilizado!");   
+                echo json_encode($allMensages);
+                exit;
+            }
+
+            exit;
 
 
         }
