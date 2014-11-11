@@ -175,9 +175,29 @@ class UsuarioController extends Zend_Controller_Action {
         
     }
 
+
+    public function updateDadosAction(){
+        
+         $request = $this->getRequest();    
+         $dataRequest = $request->getPost();
+        
+        if(!isset($dataRequest['tokem'])){
+            http_response_code(203);
+            exit();
+        }else{
+
+            $tokem = $dataRequest["tokem"];
+            $usuario =  $this->_usuario->find($tokem)->current();
+
+
+        }
+
+    }
+
+
     public function createFacebook(){
         
-    }
+    }    
     
     public function viewAction()
     {

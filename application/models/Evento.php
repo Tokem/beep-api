@@ -12,22 +12,25 @@ class Application_Model_Evento extends Zend_Db_Table
 
         $db = $this->getDefaultAdapter();
         
-        $lista = $this->select();
+        $lista = $this->select()->distinct();
         $lista->setIntegrityCheck(false);
         $lista->from(array('be' => 'beep_evento'))
-                ->join(array('bec' => 'beep_evento_ckeck'), 'be.eve_id = bec.eve_id')
-                ->where("
-                 be.eve_ativo=1
-                 AND be.eve_especial = 1 
-                 AND be.eve_data_especial_prazo = CURDATE()   
-                 AND dt.tar_finalizado=1")
-                ->order(array('dt.tar_codigo DESC'))    
+                ->where("NOW() BETWEEN  eve_data_especial_inicio AND eve_data_especial_fim")
                ->limit(3);
 
-        echo $lista;
-        exit;       
+        $listaEventos =  $db->fetchAll($lista);
 
-        return $cliente =  $db->fetchAll($lista);
+
+        $select = $this->select()
+             ->from('beep_check', array())
+             ->columns(array('TotalRecords' => new Zend_Db_Expr('COUNT(*)')));
+
+        foreach ($listaEventos as $key => $value) {
+
+            //$listaEventos[$key]['count'] = 
+        }
+
+        exit;
 
     }    
         

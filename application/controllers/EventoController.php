@@ -7,6 +7,7 @@ class EventoController extends Zend_Controller_Action
     private $_evento = null;
     private $_atracao = null;
     private $_ingresso = null;
+    private $_estilo = null;
     
     public function init()
     {
@@ -94,7 +95,7 @@ class EventoController extends Zend_Controller_Action
 
              $allMensages["msg"] = "success";
                     $allMensages["data"] = array("state"=>"200",
-                        "msg"=>"Evento cadastrado com sucesso!");
+                        "msg"=>"Evento cadastrado com sucesso!","eve_id"=>"$idEvent");
                 echo json_encode($allMensages);    
              exit;
 
@@ -105,6 +106,23 @@ class EventoController extends Zend_Controller_Action
          }
 
  }
+
+    public function estiloAtracaoAction()
+    {
+        $this->estilo = new Application_Model_Estilo();
+
+        $lista = $this->estilo->fetchAll();
+
+        $estilos = array();
+
+        foreach ($lista as $key) {
+            $estilos[] = array("est_id"=> $key['est_id'],"est_nome"=>$key['est_nome']);
+        }
+
+        echo json_encode($estilos);
+
+        exit;
+    }    
 
     public function editAction()
     {
