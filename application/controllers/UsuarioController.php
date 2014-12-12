@@ -25,7 +25,10 @@ class UsuarioController extends Zend_Controller_Action {
         $dataRequest = $request->getPost();
         
         if(!$request->isXmlHttpRequest() && !isset($dataRequest['email']) && !isset($dataRequest['senha'])){
-            http_response_code(203);
+            $allMensages["msg"] = "error";
+            $allMensages["data"] = array("state"=>"500","msg"=>"Não foi possível efetuar essa operação!");
+		   // http_response_code(203);
+		   echo json_encode($allMensages);
             exit();
         }else{
             
@@ -42,8 +45,7 @@ class UsuarioController extends Zend_Controller_Action {
                 $tokem = $this->_trim->filter($this->_strip->filter($better_token = md5(uniqid(rand(), true))));
                 
                 $user = array("usr_usuario"=>"$usuario","usr_email"=>"$email","usr_senha"=>"$senha","usr_tokem"=>"$tokem");
-                try {
-                    
+                try {                   
                     $return = $this->_usuario->insert($user);
                     $beep = new Application_Model_Beeps();
 
@@ -56,7 +58,7 @@ class UsuarioController extends Zend_Controller_Action {
                     $allMensages["msg"] = "success";
                     $allMensages["data"] = array("state"=>"200",
                         "tokem"=>"$tokem",
-                        "usuario"=>"$usuario",
+                        "username"=>"$usuario",
                         "email"=>"$email",
                         "permissao"=>"usuario",
                         "beeps"=>"$returnBeep->bee_beeps",
@@ -176,30 +178,36 @@ class UsuarioController extends Zend_Controller_Action {
     }
 
 
-    public function updateDadosAction(){
-        
+    public function updatedadosAction(){
+     
          $request = $this->getRequest();    
          $dataRequest = $request->getPost();
          $functions = new Tokem_Functions();
         
-        if(!isset($dataRequest['usr_tokem'])){
-            http_response_code(203);
+        if(!isset($dataRequest['tokem'])){
+          //  http_response_code(203);
+          $allMensages["msg"] = "error";
+          $allMensages["data"] = array("state"=>"500","msg"=>"Não foi possível efetuar essa operação!");
+	   // http_response_code(203);
+	   echo json_encode($allMensages);
             exit();
         }else{
 
-            $tokem = $dataRequest["usr_tokem"];
+            $tokem = $dataRequest["tokem"];
             $usuario =  $this->_usuario->fetchRow("usr_tokem = '$tokem' ");
-
-            $usuario->usr_primeiro_nome = $dataRequest["usr_primeiro_nome"];
-            $usuario->usr_ultimo_nome = $dataRequest["usr_ultimo_nome"];
+			
+			if($dataRequest["primeiro_nome"])
+            	$usuario->usr_primeiro_nome = $dataRequest["primeiro_nome"];
+			
+			if($dataRequest["ultimo_nome"])
+           		$usuario->usr_ultimo_nome = $dataRequest["ultimo_nome"];
             
             $validator = new Tokem_ValidatorUser();
-            $return = $validator->verifyEmail($dataRequest["usr_email"]);
-
-
+            //$return = $validator->verifyEmail($dataRequest["email"]);
 
             if(!$return){
-              $usuario->usr_email = $dataRequest["usr_email"];      
+				if($dataRequest["email"])
+             	   $usuario->usr_email = $dataRequest["email"];      
            
                 
                 //Obtem a foto do usuário
@@ -216,7 +224,7 @@ class UsuarioController extends Zend_Controller_Action {
                         
                         $img_nome = md5(microtime()).'_'.$newFileName;
                         $fname = $diretorio ."/". $img_nome;
-                        @$caminho  = ltrim($diretorio, ".");
+                        @$caminho  = ltrim($diretorio,"");
                         
                         /**
                          *  Let's inject the renaming filter
@@ -230,7 +238,6 @@ class UsuarioController extends Zend_Controller_Action {
                 } 
 
             $usuario->usr_foto_perfil = $fname;
-
             $usuario->save();
 
             $allMensages["msg"] = "success";

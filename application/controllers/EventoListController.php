@@ -19,15 +19,14 @@ class EventoListController extends Zend_Controller_Action
      public function indexAction()
     {
         // action body
-    }
+    	print_r('aqui');
+		exit();
+	}
 
 
-    public function listEspecialAction(){
+    public function especialAction(){
 
         $listEspecial = $this->_evento->listEspecial(7);
-
-
-
         $eventos = array();
 
         foreach ($listEspecial as $key => $value) {

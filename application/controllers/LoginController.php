@@ -25,12 +25,12 @@ class LoginController extends Zend_Controller_Action {
         
         $request = $this->getRequest();
         $dataRequest = $request->getPost();    
-        if($request->isXmlHttpRequest() && isset($dataRequest['email'])&& isset($dataRequest['senha']) && !empty($dataRequest['email']) && !empty($dataRequest['senha']) ){
 
+        if($request->isXmlHttpRequest() && isset($dataRequest['email']) && isset($dataRequest['senha']) && !empty($dataRequest['email']) && !empty($dataRequest['senha']) ){
+			
             // pega o adaptador de autenticação configurado
             $adapter = $this->_getAuthAdapter();
             
-
             // põe os dados que serão autenticados
             $adapter->setIdentity($dataRequest['email'])
                     ->setCredential($dataRequest['senha']);
@@ -38,11 +38,14 @@ class LoginController extends Zend_Controller_Action {
             //realiza a autenticação
             $auth = Zend_Auth::getInstance();
             $result = $auth->authenticate($adapter); // Zend_Auth_Result
+
             // verifica se deu certo
             if ($result->isValid()) {
+				try{
                 // se der certo, pega o registro da tabela
                 $usuario = $adapter->getResultRowObject();
-
+				
+			
                 // grava o registro autenticado na sessão
                 $auth->getStorage()->write($usuario);
 
@@ -54,21 +57,23 @@ class LoginController extends Zend_Controller_Action {
                 $categoria = $return['cla_nome'];
                 $moedas = $return['bee_beeps'];
 
-
                 $allMensages["msg"] = "success";
                 $allMensages["data"]=array("state"=>"200",
                     "msg"=>"Login realizado com sucesso",
-                    "nome"=>$return["usr_primeiro_nome"],
-                    "username"=>$return["usr_usuario"],
+                    "nome"=>$usuario->usr_primeiro_nome . " ".$usuario->usr_ultimo_nome  ,
+                    "username"=>$usuario->usr_usuario,
                     "permissao"=>"$identity->usr_permissao",
                     "tokem"=>"$identity->usr_tokem",
                     "classificacao"=>"$categoria",
                     "beeps"=>"$moedas",
-                    "imagem"=>$return["usr_foto_perfil"]);
+                    "imagem"=>$usuario->usr_foto_perfil);
                                  
                 echo json_encode($allMensages);
                 exit;
-
+				}catch(Exception $e){
+					print_r($e);
+					exti();
+				}
             } else {
                 // se não deu certo, ver qual foi o erro
                 $code = $result->getCode();
