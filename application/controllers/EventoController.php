@@ -15,7 +15,6 @@ class EventoController extends Zend_Controller_Action
         $this->_evento = new Application_Model_Evento();
         $this->_atracao = new Application_Model_Atracao();
         $this->_ingresso = new Application_Model_Ingresso();
-        
     }
 
     public function indexAction()
@@ -30,12 +29,8 @@ class EventoController extends Zend_Controller_Action
         $functions = new Tokem_Functions();
         
         if ($request->isPost()) {
-
-
             try {
-
-
-
+				
                 $tokem = $dataRequest["usr_tokem"];
                 $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
 
@@ -81,23 +76,29 @@ class EventoController extends Zend_Controller_Action
 
 
                 $idEvent = $this->_evento->insert($evento);
-
+				
+				$dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
+				$dataRequest["valor"] = json_decode($dataRequest["valor"]);
+				$dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
+				$dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
+				$dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
+				
                 for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
-                 $estilo = $dataRequest["estilo"][$i];
-                 $atracao = array("atr_nome"=>$dataRequest["atracao"][$i],"eve_id_fk"=>$idEvent,"est_id_fk"=>$estilo);
-                 $this->_atracao->insert($atracao);
-             } 
+                 	$estilo = $dataRequest["estilo"][$i];
+                 	$atracao = array("atr_nome"=>$dataRequest["atracao"][$i],"eve_id_fk"=>$idEvent,"est_id_fk"=>$estilo);
+                 	$this->_atracao->insert($atracao);
+             	} 
 
-             for ($i =0; $i < count($dataRequest["valor"]);$i++) {
-                 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
-                 $this->_ingresso->insert($ingresso);
-             }
+            	for ($i =0; $i < count($dataRequest["valor"]);$i++) {
+                	 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
+                	 $this->_ingresso->insert($ingresso);
+             	}
 
-             $allMensages["msg"] = "success";
-                    $allMensages["data"] = array("state"=>"200",
-                        "msg"=>"Evento cadastrado com sucesso!","eve_id"=>"$idEvent");
-                echo json_encode($allMensages);    
-             exit;
+            	$allMensages["msg"] = "success";
+                $allMensages["data"] = array("state"=>"200",
+                			"msg"=>"Evento cadastrado com sucesso!","eve_id"=>"$idEvent");
+				echo json_encode($allMensages);    
+            	exit;
 
              }catch (Zend_Db_Exception $e) {
         
@@ -110,9 +111,7 @@ class EventoController extends Zend_Controller_Action
     public function estiloAtracaoAction()
     {
         $this->estilo = new Application_Model_Estilo();
-
         $lista = $this->estilo->fetchAll();
-
         $estilos = array();
 
         foreach ($lista as $key) {

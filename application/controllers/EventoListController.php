@@ -19,13 +19,19 @@ class EventoListController extends Zend_Controller_Action
      public function indexAction()
     {
         // action body
-    }
+    	print_r('aqui');
+		exit();
+	}
 
 
-    public function listEspecialAction(){
+    public function especialAction(){
 
+<<<<<<< HEAD
         $listEspecial = $this->_evento->listEspecial(2);
 
+=======
+        $listEspecial = $this->_evento->listEspecial(7);
+>>>>>>> FETCH_HEAD
         $eventos = array();
 
         foreach ($listEspecial as $key => $value) {
@@ -33,7 +39,18 @@ class EventoListController extends Zend_Controller_Action
                 "id"=>$value["eve_id"],
                 "titulo"=>$value["eve_nome"],
                 "imagem"=>$value["eve_image"],
-                "count"=>$value["count"],"check"=>$value["check"]
+                "count"=>$value["count"],"check"=>$value["check"],
+				"type"=>"especial"
+            );
+        }
+		
+        $listEspecial = $this->_evento->listEvento(7);
+        foreach ($listEspecial as $key => $value) {
+            $eventos[] = array(
+                "titulo"=>$value["eve_nome"],
+                "imagem"=>$value["eve_image"],
+                "count"=>$value["count"],"check"=> $value["check"],
+				"type"=>"normal"
             );
         }
 
