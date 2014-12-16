@@ -21,7 +21,6 @@ class Tokem_ControllerBase extends Zend_Controller_Action {
     {
          parent::init();
         
-        
         $auth = Zend_Auth::getInstance();
         $identity = $auth->getIdentity();
         $this->identity = $identity;

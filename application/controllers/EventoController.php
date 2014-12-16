@@ -129,6 +129,22 @@ class EventoController extends Zend_Controller_Action
         // action body
     }
 
+    public function viewAction()
+    {
+        $request = $this->getRequest();
+        $dataRequest = $request->getPost();  
+        $eventoId = $dataRequest["eve_id"];
+
+        if ($request->isPost()) {
+
+            $tokem = $dataRequest["usr_tokem"];
+            $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
+            $evento = $this->_evento->fetchRow("eve_id='$eventoId' ");
+
+
+        }
+    }
+
     public function deleteAction()
     {
         // action body

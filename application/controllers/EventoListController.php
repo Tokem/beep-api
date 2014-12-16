@@ -24,14 +24,13 @@ class EventoListController extends Zend_Controller_Action
 
     public function listEspecialAction(){
 
-        $listEspecial = $this->_evento->listEspecial(7);
-
-
+        $listEspecial = $this->_evento->listEspecial(2);
 
         $eventos = array();
 
         foreach ($listEspecial as $key => $value) {
             $eventos[] = array(
+                "id"=>$value["eve_id"],
                 "titulo"=>$value["eve_nome"],
                 "imagem"=>$value["eve_image"],
                 "count"=>$value["count"],"check"=>$value["check"]
@@ -40,6 +39,34 @@ class EventoListController extends Zend_Controller_Action
 
         echo json_encode($eventos);
         exit;
+
+    }
+
+
+
+    public function listAction(){
+        
+        $lista = $this->_evento->listDefault(2);
+        $especial = Zend_Paginator::factory($lista);
+        $especial->setCurrentPageNumber($this->_getParam('page'));
+        $especial->setItemCountPerPage(6);
+
+        Zend_Paginator::setDefaultScrollingStyle('Sliding');
+        Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
+        
+
+        foreach ($especial as $key => $value) {
+            $eventos[] = array(
+                "id"=>$value["eve_id"],
+                "titulo"=>$value["eve_nome"],
+                "imagem"=>$value["eve_image"],
+                "count"=>$value["count"],"check"=>$value["check"]
+            );
+        }
+
+        echo json_encode($eventos);
+        exit;
+
 
     }    
 
