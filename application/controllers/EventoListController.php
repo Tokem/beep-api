@@ -33,7 +33,18 @@ class EventoListController extends Zend_Controller_Action
             $eventos[] = array(
                 "titulo"=>$value["eve_nome"],
                 "imagem"=>$value["eve_image"],
-                "count"=>$value["count"],"check"=>$value["check"]
+                "count"=>$value["count"],"check"=>$value["check"],
+				"type"=>"especial"
+            );
+        }
+		
+        $listEspecial = $this->_evento->listEvento(7);
+        foreach ($listEspecial as $key => $value) {
+            $eventos[] = array(
+                "titulo"=>$value["eve_nome"],
+                "imagem"=>$value["eve_image"],
+                "count"=>$value["count"],"check"=> $value["check"],
+				"type"=>"normal"
             );
         }
 

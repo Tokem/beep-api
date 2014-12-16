@@ -55,7 +55,7 @@ class LoginController extends Zend_Controller_Action {
                 $beep = new Application_Model_Beeps();
                 $return = $beep->getBase($identity->usr_id);
                 $categoria = $return['cla_nome'];
-                $moedas = $return['bee_beeps'];
+                $moedas = !$return['bee_beeps'] ? 0 : $return['bee_beeps'] ;
 
                 $allMensages["msg"] = "success";
                 $allMensages["data"]=array("state"=>"200",
