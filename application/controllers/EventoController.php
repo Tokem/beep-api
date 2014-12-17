@@ -70,7 +70,7 @@ class EventoController extends Zend_Controller_Action
                     "eve_hora_inicio"=>$dataRequest["hora_festa"],
                     "eve_local"=>$dataRequest["local_festa"],
                     "eve_localizacao"=>$dataRequest["localizacao_festa"],
-                    "eve_image"=>$fname,
+                    "eve_image"=>substr($fname,1,strlen($fname)),
                     "cat_id_fk"=>$dataRequest["cat_festa"],
                     );
 
@@ -166,18 +166,3 @@ class EventoController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

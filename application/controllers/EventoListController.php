@@ -26,12 +26,8 @@ class EventoListController extends Zend_Controller_Action
 
     public function especialAction(){
 
-<<<<<<< HEAD
-        $listEspecial = $this->_evento->listEspecial(2);
 
-=======
         $listEspecial = $this->_evento->listEspecial(7);
->>>>>>> FETCH_HEAD
         $eventos = array();
 
         foreach ($listEspecial as $key => $value) {
