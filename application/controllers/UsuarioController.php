@@ -237,7 +237,7 @@ class UsuarioController extends Zend_Controller_Action {
                     }
                 } 
 
-            $usuario->usr_foto_perfil = $fname;
+            $usuario->usr_foto_perfil = substr($fname,1,strlen($fname));
             $usuario->save();
 
             $allMensages["msg"] = "success";

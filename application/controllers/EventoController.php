@@ -5,6 +5,7 @@ class EventoController extends Zend_Controller_Action
     
     private $_user = null;
     private $_evento = null;
+    private $_eventoCheck = null;
     private $_atracao = null;
     private $_ingresso = null;
     private $_estilo = null;
@@ -139,9 +140,28 @@ class EventoController extends Zend_Controller_Action
             $tokem = $dataRequest["usr_tokem"];
             $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
             $evento = $this->_evento->fetchRow("eve_id='$eventoId' ");
+        }
+    }
 
+    public function checkAction(){
+
+        if ($request->isPost()) {
+
+            $tokem = $dataRequest["usr_tokem"];
+            $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
+
+
+            if(isset($usuario)){
+                
+                $this->_eventoCheck = new Application_Model_Evento();
+
+            }else{
+
+            }
 
         }
+
+
     }
 
     public function deleteAction()
