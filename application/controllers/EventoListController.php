@@ -40,7 +40,7 @@ class EventoListController extends Zend_Controller_Action
             );
         }
 		
-        $listEspecial = $this->_evento->listEvento(7);
+        $listEspecial = $this->_evento->listDefault(7);
         foreach ($listEspecial as $key => $value) {
             $eventos[] = array(
                 "titulo"=>$value["eve_nome"],
