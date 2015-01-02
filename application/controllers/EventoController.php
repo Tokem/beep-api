@@ -14,8 +14,6 @@ class EventoController extends Zend_Controller_Action
     {
         $this->_user = new Application_Model_Usuario();
         $this->_evento = new Application_Model_Evento();
-        $this->_atracao = new Application_Model_Atracao();
-        $this->_ingresso = new Application_Model_Ingresso();
     }
 
     public function indexAction()
@@ -137,11 +135,24 @@ class EventoController extends Zend_Controller_Action
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $eventoId = $dataRequest["eve_id"];
+        $this->_atracao = new Application_Model_Atracao();
+        $this->_ingresso = new Application_Model_Ingresso();
+        $this->_feed = new Application_Model_Feed();
+
 
         if ($request->isPost()) {
-            $tokem = $dataRequest["usr_tokem"];
-            $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
-            $evento = $this->_evento->fetchRow("eve_id='$eventoId' ");
+            
+            $evento = $this->_evento->find($eventoId)->current()->toArray();
+            $atracoes = $this->_atracao->fetchAll("eve_id_fk='$eventoId'")->toArray();
+            $ingresso = $this->_ingresso->fetchAll("eve_id_fk='$eventoId'")->toArray();
+            $feed = $this->_feed->fetchAll("eve_id_fk='$eventoId'","fee_data DESC")->toArray();
+
+            echo json_encode($evento);
+            echo json_encode($atracoes);
+            echo json_encode($ingresso);
+            echo json_encode($feed);
+            exit;
+
         }
     }
 
