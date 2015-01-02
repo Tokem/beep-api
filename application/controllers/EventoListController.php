@@ -28,7 +28,10 @@ class EventoListController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-        $userId = $dataRequest["usr_id"];
+        
+        $tokem = $dataRequest["tokem"];
+        $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
+        $userId = $usuario->usr_id;
 
         $listEspecial = $this->_evento->listEspecial($userId);
         $eventos = array();
@@ -54,7 +57,9 @@ class EventoListController extends Zend_Controller_Action
         
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-        $userId = $dataRequest["usr_id"];
+        $tokem = $dataRequest["tokem"];
+        $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
+        $userId = $usuario->usr_id;
 
         $lista = $this->_evento->listDefault($userId);
         $especial = Zend_Paginator::factory($lista);
