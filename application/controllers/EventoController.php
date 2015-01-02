@@ -28,14 +28,17 @@ class EventoController extends Zend_Controller_Action
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $functions = new Tokem_Functions();
-        
+
+
         if ($request->isPost()) {
             try {
 				
                 $tokem = $dataRequest["usr_tokem"];
-                $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
 
+                $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
                 $diretorio ="./upload/users/user_id_".  $usuario->usr_id."/events";
+                
+
                 $adapter = new Zend_File_Transfer_Adapter_Http(); 
 
                 foreach ($adapter->getFileInfo() as $file => $info) {
@@ -78,11 +81,11 @@ class EventoController extends Zend_Controller_Action
 
                 $idEvent = $this->_evento->insert($evento);
 				
-				$dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
-				$dataRequest["valor"] = json_decode($dataRequest["valor"]);
-				$dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
-				$dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
-				$dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
+				// $dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
+				// $dataRequest["valor"] = json_decode($dataRequest["valor"]);
+				// $dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
+				// $dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
+				// $dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
 				
                 for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
                  	$estilo = $dataRequest["estilo"][$i];
@@ -145,18 +148,59 @@ class EventoController extends Zend_Controller_Action
 
     public function checkAction(){
 
+        $request = $this->getRequest();
+        $dataRequest = $request->getPost();  
+
         if ($request->isPost()) {
 
             $tokem = $dataRequest["usr_tokem"];
             $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
+            $usuarioId = $usuario->usr_id;
+            @$idEvento =$dataRequest["eve_id"];
 
+            
+            if(isset($usuario->usr_id)){
 
-            if(isset($usuario)){
                 
-                $this->_eventoCheck = new Application_Model_Evento();
+                $eventoId = $dataRequest["eve_id"];
+                $this->_eventoCheck = new Application_Model_EventoCheck();
+                $check = $this->_eventoCheck->checkDischeck($usuarioId,$eventoId);
+                @$usrCheck = $check["usr_id"];
 
-            }else{
 
+                if(isset($check["usr_id"])){
+                    $check = $this->_eventoCheck->fetchRow("usr_id = '$usrCheck' ");
+                    
+                    try {
+                        $check->delete();
+                        $allMensages["msg"] = "success";
+                        $allMensages["data"] = array("state"=>"200","msg"=>"ok discheck");
+                        echo json_encode($allMensages);
+                        exit;    
+                    } catch (Zend_Db_Exception $e) {
+                        $allMensages["msg"] = "error";
+                        $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                        echo json_encode($allMensages);
+                    }
+                    
+                }else{
+                        $check=  array("evc_id"=>"","eve_id"=>$idEvento,"usr_id"=>$usuarioId);
+                    
+                    try {
+                        $this->_eventoCheck->insert($check);    
+                        $allMensages["msg"] = "success";
+                        $allMensages["data"] = array("state"=>"200","msg"=>"ok check");
+                        echo json_encode($allMensages);
+                        exit;
+                    } catch (Zend_Db_Exception $e) {
+                        $allMensages["msg"] = "error";
+                        $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                        echo json_encode($allMensages);   
+                    }
+
+                    
+                }
+                
             }
 
         }
