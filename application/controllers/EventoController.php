@@ -14,6 +14,9 @@ class EventoController extends Zend_Controller_Action
     {
         $this->_user = new Application_Model_Usuario();
         $this->_evento = new Application_Model_Evento();
+        $this->_atracao = new Application_Model_Atracao();
+        $this->_ingresso = new Application_Model_Ingresso();
+        $this->_feed = new Application_Model_Feed();
     }
 
     public function indexAction()
@@ -79,11 +82,11 @@ class EventoController extends Zend_Controller_Action
 
                 $idEvent = $this->_evento->insert($evento);
 				
-				$dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
-				$dataRequest["valor"] = json_decode($dataRequest["valor"]);
-				$dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
-				$dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
-				$dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
+				// $dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
+				// $dataRequest["valor"] = json_decode($dataRequest["valor"]);
+				// $dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
+				// $dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
+				// $dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
 				
                 for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
                  	$estilo = $dataRequest["estilo"][$i];
@@ -135,9 +138,6 @@ class EventoController extends Zend_Controller_Action
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $eventoId = $dataRequest["eve_id"];
-        $this->_atracao = new Application_Model_Atracao();
-        $this->_ingresso = new Application_Model_Ingresso();
-        $this->_feed = new Application_Model_Feed();
 
 
         if ($request->isPost()) {
