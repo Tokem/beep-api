@@ -82,11 +82,11 @@ class EventoController extends Zend_Controller_Action
 
                 $idEvent = $this->_evento->insert($evento);
 				
-				// $dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
-				// $dataRequest["valor"] = json_decode($dataRequest["valor"]);
-				// $dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
-				// $dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
-				// $dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
+				$dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
+				$dataRequest["valor"] = json_decode($dataRequest["valor"]);
+				$dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
+				$dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
+				$dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
 				
                 for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
                  	$estilo = $dataRequest["estilo"][$i];
