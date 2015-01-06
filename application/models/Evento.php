@@ -143,13 +143,9 @@ class Application_Model_Evento extends Zend_Db_Table
         $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
                 ->where("NOW() <= eve_data AND be.eve_data BETWEEN ('$date_ini') AND ('$date_end') AND be.eve_ativo=1 ")
                 ->order('be.eve_check DESC');
-
-        echo $lista;
-        exit;
                 
 
         $listaEventos =  $db->fetchAll($lista);
-
 
         foreach ($listaEventos as $key => $value) {
          $total["total"] = $this->countCheck($value["eve_id"]);
