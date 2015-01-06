@@ -14,7 +14,7 @@ class EventoListController extends Zend_Controller_Action
         $this->_evento = new Application_Model_Evento();
         
     }
-
+ 
 
      public function indexAction()
     {
@@ -62,15 +62,15 @@ class EventoListController extends Zend_Controller_Action
         $userId = $usuario->usr_id;
 
         $lista = $this->_evento->listDefault($userId);
-        $especial = Zend_Paginator::factory($lista);
-        $especial->setCurrentPageNumber($this->_getParam('page'));
-        $especial->setItemCountPerPage(9);
+        $default = Zend_Paginator::factory($lista);
+        $default->setCurrentPageNumber($this->_getParam('page'));
+        $default->setItemCountPerPage(9);
 
         Zend_Paginator::setDefaultScrollingStyle('Sliding');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
         
 
-        foreach ($especial as $key => $value) {
+        foreach ($default as $key => $value) {
             $eventos[] = array(
                 "id"=>$value["eve_id"],
                 "titulo"=>$value["eve_nome"],
@@ -85,7 +85,40 @@ class EventoListController extends Zend_Controller_Action
 
     }
 
+     public function categoryAction(){
+
         
+        $request = $this->getRequest();
+        $dataRequest = $request->getPost();  
+        $tokem = $dataRequest["tokem"];
+
+        $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
+        $userId = $usuario->usr_id;
+
+
+        $lista = $this->_evento->listCategory($userId,$categoryId);
+        $default = Zend_Paginator::factory($lista);
+        $default->setCurrentPageNumber($this->_getParam('page'));
+        $default->setItemCountPerPage(9);
+
+        Zend_Paginator::setDefaultScrollingStyle('Sliding');
+        Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
+        
+
+        foreach ($default as $key => $value) {
+            $eventos[] = array(
+                "id"=>$value["eve_id"],
+                "titulo"=>$value["eve_nome"],
+                "imagem"=>$value["eve_image"],
+                "count"=>$value["count"],"check"=>$value["check"]
+            );
+        }
+
+        echo json_encode($eventos);
+        exit;
+
+
+    }
 
 
 }    

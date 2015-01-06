@@ -17,7 +17,7 @@ DELIMITER ;
 DELIMITER $$
 
 CREATE TRIGGER check_update 
-	after delete ON beep_evento_check for each row 
+	after insert ON beep_evento_check for each row 
 BEGIN
 	DECLARE updatecount integer;
   SET updatecount = ( SELECT count(*) FROM beep_evento_check  WHERE eve_id = new.eve_id);

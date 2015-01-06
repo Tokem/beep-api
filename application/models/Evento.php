@@ -37,6 +37,7 @@ class Application_Model_Evento extends Zend_Db_Table
         $lista->setIntegrityCheck(false);
         $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
                 ->where("NOW() BETWEEN  eve_data_especial_inicio AND eve_data_especial_fim AND be.eve_ativo=1")
+                ->order('be.eve_check DESC')
                 ->limit(3);
 
         $listaEventos =  $db->fetchAll($lista);
@@ -73,7 +74,7 @@ class Application_Model_Evento extends Zend_Db_Table
         $lista->setIntegrityCheck(false);
         $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
                 ->where("NOW() <= eve_data AND be.eve_ativo=1")
-                ->limit(6);
+                ->order('be.eve_check DESC');
 
 
         $listaEventos =  $db->fetchAll($lista);
@@ -97,7 +98,75 @@ class Application_Model_Evento extends Zend_Db_Table
             
         return $listaEventos;
 
-    }    
+    }
+
+    public function listCategory($usr_id,$category_id){
+
+        $db = $this->getDefaultAdapter();
+    
+        $lista = $this->select()->distinct();
+        $lista->setIntegrityCheck(false);
+        $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
+                ->where("NOW() <= eve_data AND be.eve_ativo=1 AND cat_id_fk = '$category_id' ")
+                ->order('be.eve_check DESC');
+
+
+        $listaEventos =  $db->fetchAll($lista);
+
+
+        foreach ($listaEventos as $key => $value) {
+         $total["total"] = $this->countCheck($value["eve_id"]);
+         $check = $this->verifyCheck($usr_id,$value["eve_id"]);
+
+
+         if($check){
+            $listaEventos[$key]['check'] = "1";
+         }else{
+            $listaEventos[$key]['check'] = "0";
+         }
+
+         $listaEventos[$key]['count'] = $total["total"]["total"];
+
+        }
+
+            
+        return $listaEventos;
+
+    }
+
+    public function listDate($usr_id,$date_ini, $date_end ){
+
+        $db = $this->getDefaultAdapter();
+    
+        $lista = $this->select()->distinct();
+        $lista->setIntegrityCheck(false);
+        $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
+                ->where("NOW() <= eve_data AND  BETWEEN BETWEEN date($date_ini) AND date($date_end) AND be.eve_ativo=1 ")
+                ->order('be.eve_check DESC');
+
+        
+        $listaEventos =  $db->fetchAll($lista);
+
+
+        foreach ($listaEventos as $key => $value) {
+         $total["total"] = $this->countCheck($value["eve_id"]);
+         $check = $this->verifyCheck($usr_id,$value["eve_id"]);
+
+
+         if($check){
+            $listaEventos[$key]['check'] = "1";
+         }else{
+            $listaEventos[$key]['check'] = "0";
+         }
+
+         $listaEventos[$key]['count'] = $total["total"]["total"];
+
+        }
+
+            
+        return $listaEventos;
+
+    }           
         
 
 }
