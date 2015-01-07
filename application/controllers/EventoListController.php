@@ -18,8 +18,6 @@ class EventoListController extends Zend_Controller_Action
 
      public function indexAction()
     {
-        // action body
-    	print_r('aqui');
 		exit();
 	}
 
@@ -30,11 +28,19 @@ class EventoListController extends Zend_Controller_Action
         $dataRequest = $request->getPost();  
         
         $tokem = $dataRequest["tokem"];
+
         $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
         $userId = $usuario->usr_id;
 
         $listEspecial = $this->_evento->listEspecial($userId);
         $eventos = array();
+
+        if(empty($listEspecial)){
+            $mensagem = array('empty' => 'Não foram encontrados eventos');
+            echo json_encode($mensagem);
+            exit;
+        }
+        
 
         foreach ($listEspecial as $key => $value) {
             $eventos[] = array(
@@ -62,6 +68,13 @@ class EventoListController extends Zend_Controller_Action
         $userId = $usuario->usr_id;
 
         $lista = $this->_evento->listDefault($userId);
+
+        if(empty($lista)){
+            $mensagem = array('empty' => 'Não foram encontrados eventos');
+            echo json_encode($mensagem);
+            exit;
+        }
+
         $default = Zend_Paginator::factory($lista);
         $default->setCurrentPageNumber($this->_getParam('page'));
         $default->setItemCountPerPage(9);
@@ -97,6 +110,13 @@ class EventoListController extends Zend_Controller_Action
 
 
         $lista = $this->_evento->listCategory($userId,$categoryId);
+
+        if(empty($lista)){
+            $mensagem = array('empty' => 'Não foram encontrados eventos');
+            echo json_encode($mensagem);
+            exit;
+        }
+
         $default = Zend_Paginator::factory($lista);
         $default->setCurrentPageNumber($this->_getParam('page'));
         $default->setItemCountPerPage(9);
@@ -104,6 +124,7 @@ class EventoListController extends Zend_Controller_Action
         Zend_Paginator::setDefaultScrollingStyle('Sliding');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
         
+
 
         foreach ($default as $key => $value) {
             $eventos[] = array(
@@ -137,6 +158,13 @@ class EventoListController extends Zend_Controller_Action
         $userId = $usuario->usr_id;
 
         $lista = $this->_evento->listDate($userId,$dateIni, $dateEnd );
+
+        if(empty($lista)){
+            $mensagem = array('empty' => 'Não foram encontrados eventos');
+            echo json_encode($mensagem);
+            exit;
+        }
+
         $default = Zend_Paginator::factory($lista);
         $default->setCurrentPageNumber($this->_getParam('page'));
         $default->setItemCountPerPage(9);
@@ -156,7 +184,6 @@ class EventoListController extends Zend_Controller_Action
 
         echo json_encode($eventos);
         exit;
-
 
     }
 

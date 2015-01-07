@@ -31,6 +31,12 @@ class Tokem_ManipuleFolder {
 		$pasta = @mkdir("../public/upload/users/$folder/events", 0777);	
 		chmod("../public/upload/users/$folder/events", 0777);
 
+		//QRCODE
+		$pasta = @mkdir("../public/upload/users/$folder/qrcode", 0777);	
+		chmod("../public/upload/users/$folder/qrcode", 0777);
+
+
+
 	}
 
 
