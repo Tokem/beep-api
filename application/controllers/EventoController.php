@@ -73,6 +73,7 @@ class EventoController extends Zend_Controller_Action
                     "eve_tag"=>$dataRequest["tag_festa"],
                     "eve_data"=>$data,
                     "eve_hora_inicio"=>$dataRequest["hora_festa"],
+                    "eve_hora_termino"=>$dataRequest["hora_festa_fim"],
                     "eve_local"=>$dataRequest["local_festa"],
                     "eve_localizacao"=>$dataRequest["localizacao_festa"],
                     "eve_image"=>substr($fname,1,strlen($fname)),
