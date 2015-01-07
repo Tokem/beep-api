@@ -25,9 +25,12 @@ class ModerateController extends Zend_Controller_Action
     public function moderateAction()
     {
        
-       
+
        require_once APPLICATION_PATH . '/../library/phpqrcode/qrlib.php';
 
+       $request = $this->getRequest();
+       $dataRequest = $request->getPost();  
+       $id = $dataRequest["eve_id"];
 
 
 

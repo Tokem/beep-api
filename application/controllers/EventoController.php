@@ -16,7 +16,6 @@ class EventoController extends Zend_Controller_Action
         $this->_evento = new Application_Model_Evento();
         $this->_atracao = new Application_Model_Atracao();
         $this->_ingresso = new Application_Model_Ingresso();
-        $this->_feed = new Application_Model_Feed();
     }
 
     public function indexAction()
@@ -78,6 +77,7 @@ class EventoController extends Zend_Controller_Action
                     "eve_localizacao"=>$dataRequest["localizacao_festa"],
                     "eve_image"=>substr($fname,1,strlen($fname)),
                     "cat_id_fk"=>$dataRequest["cat_festa"],
+                    "usr_id_fk"=>$usuario->usr_id,
                     );
 
 
@@ -219,22 +219,14 @@ class EventoController extends Zend_Controller_Action
 
     }
 
+
     public function deleteAction()
     {
         // action body
     }
 
-    public function moderateAction()
-    {
-        // action body
-    }
 
     public function favoriteAction()
-    {
-        // action body
-    }
-
-    public function uploadAction()
     {
         // action body
     }
