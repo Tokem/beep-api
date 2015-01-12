@@ -201,6 +201,9 @@ class UsuarioController extends Zend_Controller_Action {
 			
 			if($dataRequest["ultimo_nome"])
            		$usuario->usr_ultimo_nome = $dataRequest["ultimo_nome"];
+
+            if($dataRequest["telefone"])
+                $usuario->usr_telefone = $dataRequest["telefone"];
             
             $validator = new Tokem_ValidatorUser();
             //$return = $validator->verifyEmail($dataRequest["email"]);

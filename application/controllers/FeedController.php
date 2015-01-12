@@ -69,18 +69,18 @@ class FeedController extends Zend_Controller_Action
         if ($request->isPost()) {
 
             try {
-                        $this->_feed->delete("fee_id = '$feedId'");
-                        $allMensages["msg"] = "success";
-                        $allMensages["data"] = array("state"=>"200","msg"=>"feed ok");
-                        echo json_encode($allMensages);
-                        exit;
-                    } catch (Zend_Db_Exception $e) {
-                        $allMensages["msg"] = "error";
-                        $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
-                        echo json_encode($allMensages);   
-                    }
+                            $this->_feed->delete("fee_id = '$feedId'");
+                            $allMensages["msg"] = "success";
+                            $allMensages["data"] = array("state"=>"200","msg"=>"feed ok");
+                            echo json_encode($allMensages);
+                            exit;
+                        } catch (Zend_Db_Exception $e) {
+                            $allMensages["msg"] = "error";
+                            $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                            echo json_encode($allMensages);   
+                        }
 
-        }
+            }
 
         exit;
     }

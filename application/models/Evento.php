@@ -100,6 +100,21 @@ class Application_Model_Evento extends Zend_Db_Table
 
     }
 
+    public function listInative(){
+
+        $db = $this->getDefaultAdapter();
+    
+        $lista = $this->select()->distinct();
+        $lista->setIntegrityCheck(false);
+        $lista->from(array('be' => 'beep_evento'),array('eve_id','eve_nome','eve_image'))
+                ->where("be.eve_ativo=0");
+
+        $listaEventos =  $db->fetchAll($lista);
+            
+        return $listaEventos;
+
+    }
+
     public function listCategory($usr_id,$category_id){
 
         $db = $this->getDefaultAdapter();
