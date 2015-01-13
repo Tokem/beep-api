@@ -9,6 +9,9 @@ class EventoController extends Zend_Controller_Action
     private $_atracao = null;
     private $_ingresso = null;
     private $_estilo = null;
+    private $_categoria = null;
+	private $_feed = null;
+	
     
     public function init()
     {
@@ -16,7 +19,8 @@ class EventoController extends Zend_Controller_Action
         $this->_evento = new Application_Model_Evento();
         $this->_atracao = new Application_Model_Atracao();
         $this->_ingresso = new Application_Model_Ingresso();
-    }
+        $this->_feed = new Application_Model_Feed();
+     }
 
     public function indexAction()
     {
@@ -29,10 +33,8 @@ class EventoController extends Zend_Controller_Action
         $dataRequest = $request->getPost();  
         $functions = new Tokem_Functions();
 
-
         if ($request->isPost()) {
-            try {
-				
+            try {				
                 $tokem = $dataRequest["usr_tokem"];
 
                 $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
@@ -96,7 +98,8 @@ class EventoController extends Zend_Controller_Action
              	} 
 
             	for ($i =0; $i < count($dataRequest["valor"]);$i++) {
-                	 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
+                	 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"
+						 				ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
                 	 $this->_ingresso->insert($ingresso);
              	}
 
@@ -109,25 +112,40 @@ class EventoController extends Zend_Controller_Action
              }catch (Zend_Db_Exception $e) {
         
             }
-
          }
+ 	}
 
- }
-
-    public function estiloAtracaoAction()
+    public function getEstilosAction()
     {
         $this->estilo = new Application_Model_Estilo();
         $lista = $this->estilo->fetchAll();
         $estilos = array();
 
         foreach ($lista as $key) {
-            $estilos[] = array("est_id"=> $key['est_id'],"est_nome"=>$key['est_nome']);
+            $estilos[] = array("id"=> $key['est_id'],"nome"=>$key['est_nome']);
         }
-
-        echo json_encode($estilos);
-
+		$allMensages["msg"] = "success";
+		$allMensages["data"] =  $estilos;
+        echo json_encode($allMensages);
+		
         exit;
-    }    
+    }  
+	
+    public function getCategoriasAction()
+    {
+        $this->categoria = new Application_Model_Categoria();
+        $lista = $this->categoria->fetchAll();
+        $categorias = array();
+
+        foreach ($lista as $key) {
+            $categorias[] = array("id"=> $key['cat_id'],"nome"=>$key['cat_nome']);
+        }
+		$allMensages["msg"] = "success";
+		$allMensages["data"] =  $categorias;
+        echo json_encode($allMensages);
+		
+        exit;
+    }  
 
     public function editAction()
     {
@@ -138,46 +156,36 @@ class EventoController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-        $eventoId = $dataRequest["eve_id"];
+        $eventoId = $dataRequest["evento"];
 
-
-        if ($request->isPost()) {
-            
+        if ($request->isPost()) {            
             $evento = $this->_evento->find($eventoId)->current()->toArray();
             $atracoes = $this->_atracao->fetchAll("eve_id_fk='$eventoId'")->toArray();
             $ingresso = $this->_ingresso->fetchAll("eve_id_fk='$eventoId'")->toArray();
             $feed = $this->_feed->fetchAll("eve_id_fk='$eventoId'","fee_data DESC")->toArray();
-
-            echo json_encode($evento);
-            echo json_encode($atracoes);
-            echo json_encode($ingresso);
-            echo json_encode($feed);
+		
+			$allMensages["msg"] = "success";
+			$allMensages["data"] = array('evento' => $evento, 'atracao' => $atracoes, 'ingresso' => $ingresso, 'feed' => $feed );
+			echo json_encode($allMensages);
+			
             exit;
-
         }
     }
 
     public function checkAction(){
-
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
 
         if ($request->isPost()) {
-
-            $tokem = $dataRequest["usr_tokem"];
+            $tokem = $dataRequest["tokem"];
             $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
             $usuarioId = $usuario->usr_id;
-            @$idEvento =$dataRequest["eve_id"];
-
+            @$idEvento = $dataRequest["evento"];
             
-            if(isset($usuario->usr_id)){
-
-                
-                $eventoId = $dataRequest["eve_id"];
+            if(isset($usuarioId)){
                 $this->_eventoCheck = new Application_Model_EventoCheck();
-                $check = $this->_eventoCheck->checkDischeck($usuarioId,$eventoId);
+                $check = $this->_eventoCheck->checkDischeck($usuarioId,$idEvento);
                 @$usrCheck = $check["usr_id"];
-
 
                 if(isset($check["usr_id"])){
                     $check = $this->_eventoCheck->fetchRow("usr_id = '$usrCheck' ");
@@ -185,7 +193,6 @@ class EventoController extends Zend_Controller_Action
                     try {
                         $check->delete();
                         $allMensages["msg"] = "success";
-                        $allMensages["data"] = array("state"=>"200","msg"=>"ok discheck");
                         echo json_encode($allMensages);
                         exit;    
                     } catch (Zend_Db_Exception $e) {
@@ -195,12 +202,11 @@ class EventoController extends Zend_Controller_Action
                     }
                     
                 }else{
-                        $check=  array("evc_id"=>"","eve_id"=>$idEvento,"usr_id"=>$usuarioId);
+                    $check=  array("evc_id"=>"","eve_id"=>$idEvento,"usr_id"=>$usuarioId);
                     
                     try {
                         $this->_eventoCheck->insert($check);    
                         $allMensages["msg"] = "success";
-                        $allMensages["data"] = array("state"=>"200","msg"=>"ok check");
                         echo json_encode($allMensages);
                         exit;
                     } catch (Zend_Db_Exception $e) {
@@ -208,15 +214,12 @@ class EventoController extends Zend_Controller_Action
                         $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
                         echo json_encode($allMensages);   
                     }
-
                     
                 }
                 
             }
 
         }
-
-
     }
 
 

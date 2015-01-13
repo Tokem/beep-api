@@ -8,22 +8,16 @@ class EventoListController extends Zend_Controller_Action
     private $_atracao = null;
     private $_ingresso = null;
     
-    public function init()
-    {
+    public function init() {
         $this->_user = new Application_Model_Usuario();
         $this->_evento = new Application_Model_Evento();
-        
     }
  
-
-     public function indexAction()
-    {
+     public function indexAction(){
 		exit();
 	}
 
-
     public function especialAction(){
-
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         
@@ -36,8 +30,9 @@ class EventoListController extends Zend_Controller_Action
         $eventos = array();
 
         if(empty($listEspecial)){
-            $mensagem = array('empty' => 'Não foram encontrados eventos');
-            echo json_encode($mensagem);
+        	$allMensages["msg"] = "empty";
+            $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
+			echo json_encode($allMensages);
             exit;
         }
         
@@ -54,13 +49,9 @@ class EventoListController extends Zend_Controller_Action
 		
         echo json_encode($eventos);
         exit;
-
     }
 
-
-
-    public function listAction(){
-        
+    public function listAction(){        
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $tokem = $dataRequest["tokem"];
@@ -70,8 +61,9 @@ class EventoListController extends Zend_Controller_Action
         $lista = $this->_evento->listDefault($userId);
 
         if(empty($lista)){
-            $mensagem = array('empty' => 'Não foram encontrados eventos');
-            echo json_encode($mensagem);
+        	$allMensages["msg"] = "empty";
+            $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
+			echo json_encode($allMensages);
             exit;
         }
 
@@ -94,16 +86,13 @@ class EventoListController extends Zend_Controller_Action
 
         echo json_encode($eventos);
         exit;
-
-
     }
 
-     public function categoryAction(){
-
-        
+     public function categoryAction(){        
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $tokem = $dataRequest["tokem"];
+		$categoryId = $dataRequest['value'];
 
         $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
         $userId = $usuario->usr_id;
@@ -112,8 +101,9 @@ class EventoListController extends Zend_Controller_Action
         $lista = $this->_evento->listCategory($userId,$categoryId);
 
         if(empty($lista)){
-            $mensagem = array('empty' => 'Não foram encontrados eventos');
-            echo json_encode($mensagem);
+        	$allMensages["msg"] = "empty";
+            $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
+			echo json_encode($allMensages);
             exit;
         }
 
@@ -124,8 +114,6 @@ class EventoListController extends Zend_Controller_Action
         Zend_Paginator::setDefaultScrollingStyle('Sliding');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
         
-
-
         foreach ($default as $key => $value) {
             $eventos[] = array(
                 "id"=>$value["eve_id"],
@@ -134,34 +122,37 @@ class EventoListController extends Zend_Controller_Action
                 "count"=>$value["count"],"check"=>$value["check"]
             );
         }
-
-        echo json_encode($eventos);
+		
+		$allMensages["msg"] = "success";
+		$allMensages["data"] = $eventos;
+        echo json_encode($allMensages);
         exit;
+	}
 
-
-    }
-
-    public function dateAction(){
-        
+    public function dateAction(){        
         $request = $this->getRequest();
         $dataRequest = $request->getPost();
-    
-        $aux = explode('/', $dataRequest['date_ini']);
-        $dateIni = $aux[2] . "-".$aux[1]."-".$aux[0];
+		
+		$dateValue = json_decode($dataRequest['value']);
 
-        $aux = explode('/', $dataRequest['date_end']);
-        $dateEnd = $aux[2] . "-".$aux[1]."-".$aux[0];
-        
+		foreach($dateValue as $data){
+	        $aux = explode('/', $data);
+			if($date)
+				$date .= ',';
+	        $date .= "'".$aux[2] . "-".$aux[1]."-".$aux[0]."'";
+		}
+    
         $tokem = $dataRequest["tokem"];
 
         $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
         $userId = $usuario->usr_id;
 
-        $lista = $this->_evento->listDate($userId,$dateIni, $dateEnd );
+        $lista = $this->_evento->listDate($userId,$date );
 
         if(empty($lista)){
-            $mensagem = array('empty' => 'Não foram encontrados eventos');
-            echo json_encode($mensagem);
+        	$allMensages["msg"] = "empty";
+            $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
+			echo json_encode($allMensages);
             exit;
         }
 
@@ -181,16 +172,14 @@ class EventoListController extends Zend_Controller_Action
                 "count"=>$value["count"],"check"=>$value["check"]
             );
         }
-
-        echo json_encode($eventos);
+		
+		$allMensages["msg"] = "success";
+		$allMensages["data"] = $eventos;
+        echo json_encode($allMensages);
         exit;
-
     }
 
-
-    public function nowAction(){
-
-        
+    public function nowAction(){        
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $tokem = $dataRequest["tokem"];
@@ -198,12 +187,12 @@ class EventoListController extends Zend_Controller_Action
         $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
         $userId = $usuario->usr_id;
 
-
         $lista = $this->_evento->listCategory($userId,$categoryId);
 
         if(empty($lista)){
-            $mensagem = array('empty' => 'Não foram encontrados eventos');
-            echo json_encode($mensagem);
+        	$allMensages["msg"] = "empty";
+            $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
+			echo json_encode($allMensages);
             exit;
         }
 
@@ -214,8 +203,6 @@ class EventoListController extends Zend_Controller_Action
         Zend_Paginator::setDefaultScrollingStyle('Sliding');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
         
-
-
         foreach ($default as $key => $value) {
             $eventos[] = array(
                 "id"=>$value["eve_id"],
