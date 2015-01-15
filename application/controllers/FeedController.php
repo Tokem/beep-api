@@ -19,12 +19,15 @@ class FeedController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-        $eventoId = $dataRequest["eve_id"];
+        $eventoId = $dataRequest["evento"];
 
         $allFeeds = $this->_feed->fetchAll("eve_id_fk='$eventoId' ","fee_data DESC")->toArray();
 
         if ($request->isPost()) {
-            echo json_encode($allFeeds);
+        	$allMensages["msg"] = "success";
+            $allMensages["data"] = array("feeds"=>$allFeeds);
+			echo json_encode($allMensages);
+			
             exit;
         }
             exit;
@@ -40,9 +43,10 @@ class FeedController extends Zend_Controller_Action
         $texto = $dataRequest["texto"];
 
         if ($request->isPost()) {
-            $feed = array("fee_texto"=>"$texto", "fee_titulo"=>"feed","eve_id_fk"=>"$eventoId");
+            $feed = array("fee_texto"=> $texto, "fee_titulo"=> $feed ,"eve_id_fk"=>"$eventoId");
 
             try {
+				$this->_feed->insert($feed);
 				$allMensages["msg"] = "success";
                 $allMensages["data"] = array("state"=>"200","msg"=>"feed");
                 echo json_encode($allMensages);
