@@ -24,10 +24,20 @@ class FeedController extends Zend_Controller_Action
         $allFeeds = $this->_feed->fetchAll("eve_id_fk='$eventoId' ","fee_data DESC")->toArray();
 
         if ($request->isPost()) {
-        	$allMensages["msg"] = "success";
-            $allMensages["data"] = array("feeds"=>$allFeeds);
+
+
+
+            $all = Zend_Paginator::factory($allFeeds);
+            $all->setCurrentPageNumber($this->_getParam('page'));
+            $all->setItemCountPerPage(6);
+
+            Zend_Paginator::setDefaultScrollingStyle('Sliding');
+            Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
+            
+            $allMensages["msg"] = "success";
+            $allMensages["data"] = array("feeds"=>$all);
 			echo json_encode($allMensages);
-			
+
             exit;
         }
             exit;
