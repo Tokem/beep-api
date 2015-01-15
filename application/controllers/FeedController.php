@@ -35,13 +35,14 @@ class FeedController extends Zend_Controller_Action
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $eventoId = $dataRequest["eve_id"];
+        $titulo = $dataRequest["fee_titulo"];
         $feed = $dataRequest["fee_text"];
         $texto = $dataRequest["fee_texto"];
 
 
         if ($request->isPost()) {
 
-            $feed = array("fee_text"=>"$texto","eve_id_fk"=>"$eventoId");
+            $feed = array("fee_text"=>"$texto","eve_id_fk"=>"$eventoId","fee_titulo"=>"$titulo");
 
             try {
                         $this->_feed->insert($feed);
