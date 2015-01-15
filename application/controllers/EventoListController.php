@@ -57,10 +57,11 @@ class EventoListController extends Zend_Controller_Action
         $tokem = $dataRequest["tokem"];
         $usuario = $this->_user->fetchRow("usr_tokem='$tokem'");
         $userId = $usuario->usr_id;
-
+		
+        $listEspecial = $this->_evento->listEspecial($userId);
         $lista = $this->_evento->listDefault($userId);
-
-        if(empty($lista)){
+		
+        if(empty($lista) && empty($listEspecial)){
         	$allMensages["msg"] = "empty";
             $allMensages["data"] = array("msg"=>"Não foram encontrados nenhum evento!");
 			echo json_encode($allMensages);
@@ -74,7 +75,7 @@ class EventoListController extends Zend_Controller_Action
         Zend_Paginator::setDefaultScrollingStyle('Sliding');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
         
-
+		$eventos = array();
         foreach ($default as $key => $value) {
             $eventos[] = array(
                 "id"=>$value["eve_id"],
@@ -83,8 +84,20 @@ class EventoListController extends Zend_Controller_Action
                 "count"=>$value["count"],"check"=>$value["check"]
             );
         }
-
-        echo json_encode($eventos);
+		
+		$eventosEspecial = array();
+        foreach ($listEspecial as $key => $value) {
+            $eventosEspecial[] = array(
+                "id"=>$value["eve_id"],
+                "titulo"=>$value["eve_nome"],
+                "imagem"=>$value["eve_image"],
+                "count"=>$value["count"],"check"=>$value["check"]
+            );
+        }
+		
+    	$allMensages["msg"] = "success";
+        $allMensages["data"] = array("normal" => $eventos, "especial" => $eventosEspecial);
+        echo json_encode($allMensages);
         exit;
     }
 
