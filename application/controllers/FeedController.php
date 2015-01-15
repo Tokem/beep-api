@@ -34,27 +34,23 @@ class FeedController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-        $eventoId = $dataRequest["eve_id"];
-        $feed = $dataRequest["fee_text"];
-        $texto = $dataRequest["fee_texto"];
-
+		
+        $eventoId = $dataRequest["evento"];
+        $feed = $dataRequest["titulo"];
+        $texto = $dataRequest["texto"];
 
         if ($request->isPost()) {
-
-            $feed = array("fee_text"=>"$texto","eve_id_fk"=>"$eventoId");
-
+            $feed = array("fee_texto"=>"$texto", "fee_titulo"=>"feed","eve_id_fk"=>"$eventoId");
             try {
-                        $this->_feed->insert($feed);
-                        $allMensages["msg"] = "success";
-                        $allMensages["data"] = array("state"=>"200","msg"=>"feed ok");
-                        echo json_encode($allMensages);
-                        exit;
-                    } catch (Zend_Db_Exception $e) {
-                        $allMensages["msg"] = "error";
-                        $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
-                        echo json_encode($allMensages);   
-                    }
-
+				$allMensages["msg"] = "success";
+                $allMensages["data"] = array("state"=>"200","msg"=>"feed");
+                echo json_encode($allMensages);
+                exit;
+			} catch (Zend_Db_Exception $e) {
+            	$allMensages["msg"] = "error";
+                $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                echo json_encode($allMensages);   
+			}
         }
 
         exit;
@@ -67,21 +63,19 @@ class FeedController extends Zend_Controller_Action
         $feedId = $dataRequest["fee_id"];
 
         if ($request->isPost()) {
-
             try {
-                            $this->_feed->delete("fee_id = '$feedId'");
-                            $allMensages["msg"] = "success";
-                            $allMensages["data"] = array("state"=>"200","msg"=>"feed ok");
-                            echo json_encode($allMensages);
-                            exit;
-                        } catch (Zend_Db_Exception $e) {
-                            $allMensages["msg"] = "error";
-                            $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
-                            echo json_encode($allMensages);   
-                        }
-
+				$this->_feed->delete("fee_id = '$feedId'");
+				$allMensages["msg"] = "success";
+                $allMensages["data"] = array("state"=>"200","msg"=>"feed ok");
+                echo json_encode($allMensages);
+                exit;
+            } catch (Zend_Db_Exception $e) {
+            	$allMensages["msg"] = "error";
+                $allMensages["data"] = array("state"=>"500","msg"=>"Estamos enfrentando problemas... tente novamente mais tarde!");
+                echo json_encode($allMensages);   
             }
 
+		}
         exit;
     }
 
