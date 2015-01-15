@@ -34,13 +34,14 @@ class FeedController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
-		
+
         $eventoId = $dataRequest["evento"];
         $feed = $dataRequest["titulo"];
         $texto = $dataRequest["texto"];
 
         if ($request->isPost()) {
             $feed = array("fee_texto"=>"$texto", "fee_titulo"=>"feed","eve_id_fk"=>"$eventoId");
+
             try {
 				$allMensages["msg"] = "success";
                 $allMensages["data"] = array("state"=>"200","msg"=>"feed");
