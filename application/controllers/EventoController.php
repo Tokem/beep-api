@@ -115,7 +115,7 @@ class EventoController extends Zend_Controller_Action
          }
  	}
 
-    public function getEstilosAction()
+    public function estilosAction()
     {
         $this->estilo = new Application_Model_Estilo();
         $lista = $this->estilo->fetchAll();
