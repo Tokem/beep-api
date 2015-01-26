@@ -131,7 +131,7 @@ class EventoController extends Zend_Controller_Action
         exit;
     }  
 	
-    public function getCategoriasAction()
+    public function categoriasAction()
     {
         $this->categoria = new Application_Model_Categoria();
         $lista = $this->categoria->fetchAll();
