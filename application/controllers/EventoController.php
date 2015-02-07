@@ -32,10 +32,11 @@ class EventoController extends Zend_Controller_Action
         $request = $this->getRequest();
         $dataRequest = $request->getPost();  
         $functions = new Tokem_Functions();
-
+	//	print_r($dataRequest);
+		
         if ($request->isPost()) {
             try {				
-                $tokem = $dataRequest["usr_tokem"];
+                $tokem = $dataRequest["tokem"];
 
                 $usuario = $this->_user->fetchRow("usr_tokem = '$tokem' ");
                 $diretorio ="./upload/users/user_id_".  $usuario->usr_id."/events";
@@ -82,14 +83,16 @@ class EventoController extends Zend_Controller_Action
                     "usr_id_fk"=>$usuario->usr_id,
                     );
 
-
+					
                 $idEvent = $this->_evento->insert($evento);
 				
 				$dataRequest["atracao"] = json_decode($dataRequest["atracao"]);
 				$dataRequest["valor"] = json_decode($dataRequest["valor"]);
 				$dataRequest["descricao"] = json_decode($dataRequest["descricao"]);
+				
 				$dataRequest["estilo"] = json_decode($dataRequest["estilo"]);
 				$dataRequest["tipo"] = json_decode($dataRequest["tipo"]);
+				
 				
                 for ($i =0; $i < count($dataRequest["atracao"]);$i++) {
                  	$estilo = $dataRequest["estilo"][$i];
@@ -98,8 +101,8 @@ class EventoController extends Zend_Controller_Action
              	} 
 
             	for ($i =0; $i < count($dataRequest["valor"]);$i++) {
-                	 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],"
-						 				ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
+                	 $ingresso = array("ing_valor"=>$dataRequest["valor"][$i],
+					 			"ing_descricao"=>$dataRequest["descricao"][$i],"eve_id_fk"=>$idEvent);
                 	 $this->_ingresso->insert($ingresso);
              	}
 
@@ -110,8 +113,12 @@ class EventoController extends Zend_Controller_Action
             	exit;
 
              }catch (Zend_Db_Exception $e) {
-        
+        		// var_dump($e);
             }
+         }else{
+         	$allMensages["msg"] = "error";
+             $allMensages["data"] = array("msg"=>"Error!");
+			echo json_encode($allMensages);    
          }
  	}
 
@@ -162,10 +169,29 @@ class EventoController extends Zend_Controller_Action
             $evento = $this->_evento->find($eventoId)->current()->toArray();
             $atracoes = $this->_atracao->fetchAll("eve_id_fk='$eventoId'")->toArray();
             $ingresso = $this->_ingresso->fetchAll("eve_id_fk='$eventoId'")->toArray();
-            $feed = $this->_feed->fetchAll("eve_id_fk='$eventoId'","fee_data DESC")->toArray();
-		
+            
+			// PAGINACAO INICIAL FEED
+			$allFeeds = $this->_feed->fetchAll("eve_id_fk='$eventoId'","fee_data DESC")->toArray();
+			
+            $all = Zend_Paginator::factory($allFeeds);
+            $all->setCurrentPageNumber($this->_getParam('page'));
+            $all->setItemCountPerPage(2);
+            Zend_Paginator::setDefaultScrollingStyle('Sliding');
+            Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.phtml');
+            
+
+            foreach ($all as $feed){
+                $list[] = array(
+                    "id"=>$feed["fee_id"],
+                    "titulo"=>$feed["fee_titulo"],
+                    "texto"=>$feed["fee_texto"],
+                    "data"=>date("d/m/Y H:i:s ",strtotime($feed["fee_data"]) ),
+                );
+            }
+			//END FEED PAGINACAO
+			
 			$allMensages["msg"] = "success";
-			$allMensages["data"] = array('evento' => $evento, 'atracao' => $atracoes, 'ingresso' => $ingresso, 'feed' => $feed );
+			$allMensages["data"] = array('evento' => $evento, 'atracao' => $atracoes, 'ingresso' => $ingresso, 'feed' => $list );
 			echo json_encode($allMensages);
 			
             exit;
